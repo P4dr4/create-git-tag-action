@@ -1,0 +1,20 @@
+name: Create Git Tag
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create Git Tag
+        uses: ./  # Assuming the action is in the root directory of your repo
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: 'v1.0.0'  # Replace with your tag naming logic
+          override: 'true'  # Set to 'false' if you do not want to override existing tags
