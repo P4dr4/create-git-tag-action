@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -9,23 +32,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const rest_1 = require("@octokit/rest");
-class GitTagger {
-    constructor(token) {
-        this.octokit = new rest_1.Octokit({ auth: token });
-    }
-    createTag(options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { githubToken, tagName, override = false } = options;
-            const { owner, repo } = process.env; // Assuming owner and repo are set as environment variables
+exports.createTag = void 0;
+const core = __importStar(require("@actions/core"));
+const github = __importStar(require("@actions/github"));
+function createTag() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const context = github.context;
+            const token = core.getInput('github-token');
+            const client = github.getOctokit(token);
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const tagName = core.getInput('tag_name');
+            const ref = `tags/${tagName}`;
+            const override = core.getInput('override') === 'true';
             // Check if tag exists
             try {
-                const ref = `tags/${tagName}`;
-                yield this.octokit.git.getRef({ owner, repo, ref });
+                yield client.rest.git.getRef({ owner, repo, ref });
                 console.log(`Tag '${tagName}' exists.`);
                 if (override) {
+                    // Delete the tag
                     console.log(`Deleting tag '${tagName}'...`);
-                    yield this.octokit.git.deleteRef({ owner, repo, ref });
+                    yield client.rest.git.deleteRef({ owner, repo, ref });
+                }
+                else {
+                    core.setFailed(`Tag '${tagName}' already exists and override is not set.`);
+                    return;
                 }
             }
             catch (error) {
@@ -33,17 +65,19 @@ class GitTagger {
             }
             // Create the tag from the current ref
             try {
-                const sha = process.env.GITHUB_SHA; // Assuming GITHUB_SHA is set by GitHub Actions
-                const ref = `refs/tags/${tagName}`;
+                const sha = context.sha;
                 console.log(`Creating tag '${tagName}' from '${sha}'`);
-                yield this.octokit.git.createRef({ owner, repo, ref, sha });
+                yield client.rest.git.createRef({ owner, repo, ref: `refs/${ref}`, sha });
                 console.log(`Tag '${tagName}' created from '${sha}'.`);
             }
             catch (error) {
-                console.error(`Failed to create tag '${tagName}' from '${sha}': ${error}`);
-                process.exit(1);
+                console.error(`Failed to create tag '${tagName}' from '${context.sha}': ${error}`);
+                core.setFailed(`Failed to create tag '${tagName}' from '${context.sha}': ${error}`);
             }
-        });
-    }
+        }
+        catch (error) {
+            core.setFailed(`Action failed with error: ${error.message}`);
+        }
+    });
 }
-exports.default = GitTagger;
+exports.createTag = createTag;
