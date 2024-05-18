@@ -12,6 +12,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4.0.2
+        with:
+          node-version: 16 
+
       - name: Create Git Tag
         uses: ./  # Assuming the action is in the root directory of your repo
         with:
