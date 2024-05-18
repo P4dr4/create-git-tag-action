@@ -4,7 +4,7 @@ To create a workflow that creates a git tag using TypeScript, we need to set up 
 
 ### Step 1: Create a reusable GitHub Action for creating a git tag
 This action will be defined in a separate repository. 
-
+ 
 1. **Create the repository** (e.g., `git-tag-action`).
 2. **Define the action** in a file named `action.yml`.
 
