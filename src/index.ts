@@ -1,26 +1,12 @@
-console.log("Try npm run lint/fix!");
+import GitTagger from "./main/create-git-tag";
 
-const longString = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut aliquet diam.';
+const createTagger = new GitTagger(process.env.GITHUB_TOKEN); // Assuming GITHUB_TOKEN is set
 
-const trailing = 'Semicolon'
-
-			const why={am:'I tabbed?'};
-
-const iWish = "I didn't have a trailing space..."; 
-
-const sicilian = true;;
-
-const vizzini = (!!sicilian) ? !!!sicilian : sicilian;
-
-const re = /foo   bar/;
-
-export function doSomeStuff(withThis: string, andThat: string, andThose: string[]) {
-    //function on one line
-    if(!Boolean(andThose.length)) {return false;}
-    console.log(withThis);
-    console.log(andThat);
-    console.dir(andThose);
-    console.log(longString, trailing, why, iWish, vizzini, re);
-    return;
-}
-// TODO: more examples
+(async () => {
+  const tagOptions: CreateTagInput = {
+    tagName: "your-tag-name", // Replace with your desired tag name
+    override: true, // Set to false if you don't want to override existing tags
+    githubToken: process.env.GITHUB_TOKEN, // Assuming GITHUB_TOKEN is set
+  };
+  await createTagger.createTag(tagOptions);
+})();
