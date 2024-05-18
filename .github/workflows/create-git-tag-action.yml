@@ -23,9 +23,6 @@ jobs:
       - name: Build the project
         run: npm run build
 
-      - name: Run your action
-        run: node dist/index.js
-
       - name: Create Git Tag
         uses: ./  # Assuming the action is in the root directory of your repo
         with:
