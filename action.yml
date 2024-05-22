@@ -17,5 +17,6 @@ runs:
   using: 'node16'
   main: 'dist/index.js'
 
-icon: at-sign
-color: red
+branding:
+  icon: 'at-sign'
+  color: 'red'
