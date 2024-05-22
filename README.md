@@ -145,3 +145,4 @@ Ensure you replace `<owner>/<git-tag-action-repo>` with your actual GitHub usern
 2. Test the setup by pushing changes to the main branch of the calling repository or triggering the workflow manually.
 
 This setup should help you create a git tag using a TypeScript GitHub Action and call this action from another repository.
+
