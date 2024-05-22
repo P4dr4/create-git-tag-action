@@ -18,4 +18,4 @@ runs:
   main: 'dist/index.js'
 
 icon: at-sign
-color: 'Red'
+color: red
