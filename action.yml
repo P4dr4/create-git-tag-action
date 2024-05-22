@@ -1,4 +1,4 @@
-name: 'Create Git Tag'
+name: 'Create Git Tag Action'
 description: 'Action to create a git tag'
 
 inputs:
